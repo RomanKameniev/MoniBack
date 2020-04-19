@@ -25,7 +25,10 @@
 		"koa-logger": "^3.2.1",
 		"koa-route": "^3.2.0",
 		"koa-router": "^8.0.8",
-		"koa-websocket": "^6.0.0"
+		"koa-websocket": "^6.0.0",
+		"nodemon": "^2.0.3",
+		"qrcode": "^1.4.4",
+		"sharp": "^0.25.2"
 	},
 	"devDependencies": {
 		"eslint": "^6.8.0",
