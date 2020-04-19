@@ -1,13 +1,29 @@
-import Koa from 'koa'
+//! added es6+ syntax verification
 
-import Router from 'koa-router'
-import loggerL from 'koa-logger'
-//import logger from 'koa-morgan'
+import Koa from 'koa'
+import Router from 'koa-router' //router
+import loggerL from 'koa-logger' //perfect logger
+import bodyParser from 'koa-bodyparser' // парсер для POST запросов
+import serve from 'koa-static' // модуль, который отдает статические файлы типа index.html из заданной директории
+import passport from 'koa-passport' //реализация passport для Koa
+
+
+
+// import LocalStrategy from 'passport-local' //локальная стратегия авторизации
+// import { Strategy, ExtractJwt } from 'passport-jwt' // авторизация через JWT
+// import socketioJwt from 'socketio-jwt'
+// import socketIO from 'socket.io'
+// import crypto from 'crypto'
+
 const app = new Koa()
 var router = new Router()
 
 //app.use(logger('combined'))
+
+app.use(passport.initialize()) // сначала passport
+app.use(serve('public'))
 app.use(loggerL())
+app.use(bodyParser())
 
 router.get('/', (ctx) => {
 	ctx.body = 'I am root!'

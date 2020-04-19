@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+    web:
+        build: .
+        ports:
+          - "3010:3000"
+          - "3011:3001"
+          - "3012:3002"
+          - "3013:3002"
+        links:
+          - aerospike
+        environment:
+          - AEROSPIKE_HOST=aerospike
+    aerospike:
+        image: aerospike/aerospike-server
+        volumes: 
+          - $PWD:/opt/aerospike/etc
