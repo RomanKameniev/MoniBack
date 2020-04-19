@@ -5,7 +5,7 @@
 	"main": "./scr/app.js",
 	"scripts": {
 		"lint": "eslint ./src --fix",
-		"start": "node index.js",
+		"start": "nodemon index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": "git@github.com:RomanKameniev/MoniBack.git",
@@ -22,7 +22,9 @@
 		"@babel/register": "^7.0.0",
 		"babel-runtime": "^6.26.0",
 		"koa": "^2.11.0",
+		"koa-body": "^4.1.1",
 		"koa-logger": "^3.2.1",
+		"koa-morgan": "^1.0.1",
 		"koa-route": "^3.2.0",
 		"koa-router": "^8.0.8",
 		"koa-websocket": "^6.0.0",
