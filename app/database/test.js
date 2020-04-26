@@ -1,21 +1,20 @@
 const api = require('./api')
+const assert = require('assert')
 // Establish connection to the cluster
-api.connect((error) => {
-	if (error) {
-		// handle failure
-		let dbStatusCode = error.code
-		console.log('Connection to Aerospike cluster failed!', dbStatusCode)
-	} else {
-		// handle success
-		console.log('Connection to Aerospike cluster succeeded!')
-		write(1)
-	}
+api.connect(function (err) {
+	assert.equal(null, err)
+	console.log('Connected successfully to server')
+
+	const db = api.db('Moni')
+    console.log('db', db)
+    write()
+	api.close()
 })
 
-const write = async (key) => {
+const write = async () => {
 	return await new Promise((res, rej) => {
 		// console.log('inPromise> ', key)
-		api.writeRecord(key, { value: 'hello with aerospike' }, (error, result) => {
+		api.writeRecord({ value: 'hello with aerospike' }, (error, result) => {
 			if (error) {
 				console.warn('error => ', error)
 				rej(error)

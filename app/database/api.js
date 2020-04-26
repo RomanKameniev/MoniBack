@@ -1,26 +1,11 @@
-const Aerospike = require('aerospike')
-const { aerospikeDBParams, aerospikeClusterIP, aerospikeClusterPort } = require('./aerospike_config')
+const MongoClient = require('mongodb').MongoClient;
+const {url, port} = require('./config')
+const client = new MongoClient(`${url}:${port}`, {useNewUrlParser: true});
 
-const aerospikeConfig = {
-	hosts: [{ addr: aerospikeClusterIP, port: aerospikeClusterPort }],
-	log: {
-		level: Aerospike.log.INFO,
-		file: 'test.log',
-	},
-}
 
-const client = Aerospike.client(aerospikeConfig)
-// Establish connection to the cluster
-exports.connect = function (callback) {
-	client.connect(callback)
-}
-exports.disconnect = (callback) => {
-	client.disconnect(callback)
-}
-// Write a record
+
 exports.writeRecord = async (k, v, callback) => {
 	console.log('write', k, v)
-	let key = new Aerospike.Key(aerospikeDBParams.defaultNamespace, aerospikeDBParams.defaultSet, k)
 	await client.put(key, v, (error) => {
 		// Check for errors
 		if (error) {
@@ -47,7 +32,7 @@ exports.readRecord = function (k, callback) {
 		}
 	})
 }
-
+ 
 exports.removeRecord = function (k, callback) {
 	//console.log('k=>', k)
 	let key = new Aerospike.Key(aerospikeDBParams.defaultNamespace, aerospikeDBParams.defaultSet, k)
