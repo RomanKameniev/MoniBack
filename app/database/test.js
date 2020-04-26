@@ -1,6 +1,6 @@
 const api = require('./api')
 // Establish connection to the cluster
-api.connect(async (error) => {
+api.connect((error) => {
 	if (error) {
 		// handle failure
 		let dbStatusCode = error.code
@@ -8,7 +8,7 @@ api.connect(async (error) => {
 	} else {
 		// handle success
 		console.log('Connection to Aerospike cluster succeeded!')
-		await write(1)
+		write(1)
 	}
 })
 

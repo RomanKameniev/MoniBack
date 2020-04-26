@@ -1,5 +1,13 @@
 const Aerospike = require('aerospike')
-const { aerospikeConfig, aerospikeDBParams } = require('./aerospike_config')
+const { aerospikeDBParams, aerospikeClusterIP, aerospikeClusterPort } = require('./aerospike_config')
+
+const aerospikeConfig = {
+	hosts: [{ addr: aerospikeClusterIP, port: aerospikeClusterPort }],
+	log: {
+		level: Aerospike.log.INFO,
+		file: 'test.log',
+	},
+}
 
 const client = Aerospike.client(aerospikeConfig)
 // Establish connection to the cluster
@@ -11,15 +19,16 @@ exports.disconnect = (callback) => {
 }
 // Write a record
 exports.writeRecord = async (k, v, callback) => {
-	//console.log('write', k, v)
+	console.log('write', k, v)
 	let key = new Aerospike.Key(aerospikeDBParams.defaultNamespace, aerospikeDBParams.defaultSet, k)
-	await client.put(key, v, async (error) => {
+	await client.put(key, v, (error) => {
 		// Check for errors
 		if (error) {
+			console.log('error', error)
 			// An error occurred
-			return await callback(error)
+			return callback(error)
 		} else {
-			return await callback(null, 'ok')
+			return callback(null, 'ok')
 		}
 	})
 }
