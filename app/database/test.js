@@ -1,20 +1,17 @@
 const api = require('./api')
-const assert = require('assert')
 // Establish connection to the cluster
-api.connect(function (err) {
-	assert.equal(null, err)
-	console.log('Connected successfully to server')
 
-	const db = api.db('Moni')
-    console.log('db', db)
-    write()
-	api.close()
-})
+const tryConnect = async () => {
+	await api.connect()
+	await write()
+	await find()
+	await api.disconnect()
+}
 
 const write = async () => {
 	return await new Promise((res, rej) => {
 		// console.log('inPromise> ', key)
-		api.writeRecord({ value: 'hello with aerospike' }, (error, result) => {
+		api.writeOneRecord('users', { value: 'hello with mongo' }, (error, result) => {
 			if (error) {
 				console.warn('error => ', error)
 				rej(error)
@@ -25,3 +22,20 @@ const write = async () => {
 		})
 	})
 }
+
+const find = async () => {
+	return await new Promise((res, rej) => {
+		// console.log('inPromise> ', key)
+		api.findOneRecord('users', {}, (error, result) => {
+			if (error) {
+				console.warn('error => ', error)
+				rej(error)
+			} else {
+				   console.log('res => ', result)
+			}
+			res(result || error)
+		})
+	})
+}
+
+tryConnect()

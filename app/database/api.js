@@ -1,26 +1,92 @@
-const MongoClient = require('mongodb').MongoClient;
-const {url, port} = require('./config')
-const client = new MongoClient(`${url}:${port}`, {useNewUrlParser: true});
+const MongoClient = require('mongodb').MongoClient
 
+const { url, port, dbName } = require('./config')
 
+const uri = `mongodb://${url}:${port}`
 
-exports.writeRecord = async (k, v, callback) => {
-	console.log('write', k, v)
-	await client.put(key, v, (error) => {
-		// Check for errors
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+
+var db
+
+const connect = async () => {
+	console.log('- uri =>', uri)
+	//console.log('client', client)
+	const con = await new Promise((res) => {
+		client.connect((err, data) => {
+			if (err) {
+				console.log('err', err)
+				res(null)
+			}
+			console.log('Connected successfully to server')
+			res(data)
+		})
+	})
+	db = con.db(dbName)
+	//	console.log('db', db)
+}
+
+exports.connect = connect
+
+exports.disconnect = async () => {
+	try {
+        await client.close()
+        console.log('disconnected')
+	} catch (e) {
+		console.log('error while trying to close connect', e)
+	} finally {
+		console.log('disconnect function')
+	}
+}
+
+exports.writeOneRecord = async (col, v, callback) => {
+	let api
+
+	try {
+		api = db.collection(col)
+	} catch (e) {
+		console.log('error while try to get', e)
+		callback('error while getting db')
+		return
+	}
+
+	await api.insertOne(v, (error /*, result*/) => {
 		if (error) {
-			console.log('error', error)
-			// An error occurred
+			console.log('error while try to insertOne', error)
 			return callback(error)
 		} else {
-			return callback(null, 'ok')
+			//		console.log('result', result)
+			console.log('Inserted')
+			callback(null, 'ok')
 		}
 	})
 }
+
+exports.findOneRecord = async (col, v, callback) => {
+	let api
+
+	try {
+		api = db.collection(col)
+	} catch (e) {
+		console.log('error while try to get', e)
+		callback('error while getting db')
+		return
+	}
+
+	await api.findOne(v, (error, result) => {
+		if (error) {
+			console.log('error while try to insertOne', error)
+			return callback(error)
+		} else {
+			//		console.log('result', result)
+			console.log('Data taked')
+			callback(null, result)
+		}
+	})
+}
+/*
 // Read a record
 exports.readRecord = function (k, callback) {
 	//console.log('k=>', k)
-	let key = new Aerospike.Key(aerospikeDBParams.defaultNamespace, aerospikeDBParams.defaultSet, k)
 	client.get(key, function (error, record) {
 		// Check for errors
 		// console.log('records= >', record)
@@ -32,7 +98,7 @@ exports.readRecord = function (k, callback) {
 		}
 	})
 }
- 
+
 exports.removeRecord = function (k, callback) {
 	//console.log('k=>', k)
 	let key = new Aerospike.Key(aerospikeDBParams.defaultNamespace, aerospikeDBParams.defaultSet, k)
@@ -47,3 +113,4 @@ exports.removeRecord = function (k, callback) {
 		}
 	})
 }
+*/
