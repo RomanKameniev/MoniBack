@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./app /app/
 
-RUN npm install 
+RUN npm install && npm install -g node-gyp
 
 CMD ["npm", "start"]
 
