@@ -25,19 +25,6 @@ app.use(serve('public'))
 app.use(loggerL())
 app.use(bodyParser())
 
-router.get('/', (ctx) => {
-	ctx.body = 'I am root!'
-})
-
-router.get('/second_route', (ctx) => {
-	ctx.body = 'I am second_route'
-})
-
-router.post('/something', (ctx) => {
-	ctx.body = {
-		something: 'something here',
-	}
-})
 
 app.use(async function pageNotFound(ctx) {
 	// we need to explicitly set 404 here
@@ -60,6 +47,22 @@ app.use(async function pageNotFound(ctx) {
 	}
 })
 
+
+router.get('/', (ctx) => {
+	ctx.body = 'I am root!'
+})
+
+router.get('/second_route', (ctx) => {
+	ctx.body = 'I am second_route'
+})
+
+router.post('/something', (ctx) => {
+	ctx.body = {
+		something: 'something here',
+	}
+})
+
+
 app.use(router.routes()).use(router.allowedMethods())
 
-app.listen(3001)
+app.listen(80)
