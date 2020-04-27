@@ -31,7 +31,7 @@ const sendMailVarify = async (email, id) => {
         <div><b>Recently you was registered on servivce moni.wtf</b></div>
         <div>if that was not you, please, ignore this message</div>
         <div>To complete registration follow link: </div>
-        <a href={localhost:80/?verify=${id}}>http://localhost:80/?verify=${id}</a>
+        <a href={https://api.moni.wtf:80/?verify=${id}}>https://api.moni.wtf:80/?verify=${id}</a>
     </body>
     </html>
     `,
