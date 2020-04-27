@@ -1,8 +1,9 @@
 const MongoClient = require('mongodb').MongoClient
+const mongo = require('mongodb')
 
-const { url, port, dbName } = require('./config')
+const { url, dbName } = require('./config')
 
-const uri = `mongodb://${url}:${port}`
+const uri = `mongodb://${url}` //:${port}`
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
@@ -16,21 +17,23 @@ const connect = async () => {
 			if (err) {
 				console.log('err', err)
 				res(null)
+				return
 			}
 			console.log('Connected successfully to server')
 			res(data)
 		})
 	})
-	db = con.db(dbName)
+	db = con ? con.db(dbName) : null
 	//	console.log('db', db)
 }
 
 exports.connect = connect
+exports.mongo = mongo
 
 exports.disconnect = async () => {
 	try {
-        await client.close()
-        console.log('disconnected')
+		await client.close()
+		console.log('disconnected')
 	} catch (e) {
 		console.log('error while trying to close connect', e)
 	} finally {
@@ -49,14 +52,14 @@ exports.writeOneRecord = async (col, v, callback) => {
 		return
 	}
 
-	await api.insertOne(v, (error /*, result*/) => {
+	await api.insertOne(v, (error, result) => {
 		if (error) {
 			console.log('error while try to insertOne', error)
 			return callback(error)
 		} else {
 			//		console.log('result', result)
 			console.log('Inserted')
-			callback(null, 'ok')
+			callback(null, result)
 		}
 	})
 }
@@ -77,8 +80,31 @@ exports.findOneRecord = async (col, v, callback) => {
 			console.log('error while try to insertOne', error)
 			return callback(error)
 		} else {
+//			console.log('result', result)
+			console.log('Taked')
+			callback(null, result)
+		}
+	})
+}
+
+exports.updateOneRecord = async (col, select, value, callback) => {
+	let api
+
+	try {
+		api = db.collection(col)
+	} catch (e) {
+		console.log('error while try to get', e)
+		callback('error while getting db')
+		return
+	}
+
+	await api.updateOne(select, { $set: value }, (error, result) => {
+		if (error) {
+			console.log('error while try to updateOne', error)
+			return callback(error)
+		} else {
 			//		console.log('result', result)
-			console.log('Data taked')
+			console.log('Updated')
 			callback(null, result)
 		}
 	})

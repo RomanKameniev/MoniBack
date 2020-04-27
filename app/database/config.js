@@ -1,4 +1,4 @@
-exports.url = '0.0.0.0'
-exports.port = 27017
+exports.url = '185.255.96.249'
+exports.port = ''
 exports.dbName = "Moni"
 

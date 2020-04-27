@@ -11,7 +11,7 @@ const tryConnect = async () => {
 const write = async () => {
 	return await new Promise((res, rej) => {
 		// console.log('inPromise> ', key)
-		api.writeOneRecord('users', { value: 'hello with mongo' }, (error, result) => {
+		api.writeOneRecord('users', {_id:15, value: 'hello with mongo' }, (error, result) => {
 			if (error) {
 				console.warn('error => ', error)
 				rej(error)
