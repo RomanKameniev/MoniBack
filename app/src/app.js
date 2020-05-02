@@ -43,4 +43,4 @@ router.post('/registration', handlers.registration)
 connect()
 app.use(router.routes()).use(router.allowedMethods())
 
-app.listen(8080)
+app.listen(80)
