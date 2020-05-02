@@ -3,9 +3,9 @@ import api from '../database/api'
 import { sendMail } from '../utils/email'
 const jwtsecret = 'mysecretkey'
 
-const setTokenToDB = async ({ token, id }) => {
+const setTokenToDB = async ({ token, email }) => {
 	await new Promise((res) => {
-		api.updateOneRecord('users', { id }, { token }, (error, result) => {
+		api.updateOneRecord('users', { email }, { token }, (error, result) => {
 			if (error) {
 				console.warn('error => ', error)
 				res(null)
@@ -36,7 +36,6 @@ let checkToken = async (ctx, next) => {
 			}
 		})
 		await next()
-
 	} else {
 		return (ctx.body = {
 			success: false,
@@ -121,7 +120,7 @@ class HandlerGenerator {
 
 		if (email && password) {
 			if (email === mockedUsername && password === mockedPassword) {
-				const token = jwt.sign({ email }, email+"hello", {
+				const token = jwt.sign({ email }, email + 'hello', {
 					expiresIn: '24h', // expires in 24 hours
 				})
 				ctx.status = 200
@@ -148,7 +147,7 @@ class HandlerGenerator {
 			if (user) {
 				if (password === user.password) {
 					console.log('password match')
-					const token = jwt.sign({ email }, email+"hello", {
+					const token = jwt.sign({ email }, email + 'hello', {
 						expiresIn: '24h', // expires in 24 hours
 					})
 					delete user.password
@@ -160,7 +159,7 @@ class HandlerGenerator {
 						user,
 						token,
 					}
-					setTokenToDB({ token, id: user.id })
+					setTokenToDB({ token, email: user.email })
 				} else {
 					ctx.status = 403
 					// return the JWT token for the future API calls
