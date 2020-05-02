@@ -121,7 +121,7 @@ class HandlerGenerator {
 
 		if (email && password) {
 			if (email === mockedUsername && password === mockedPassword) {
-				const token = jwt.sign({ email }, jwtsecret, {
+				const token = jwt.sign({ email }, email+"hello", {
 					expiresIn: '24h', // expires in 24 hours
 				})
 				ctx.status = 200
@@ -148,7 +148,7 @@ class HandlerGenerator {
 			if (user) {
 				if (password === user.password) {
 					console.log('password match')
-					const token = jwt.sign({ email }, jwtsecret, {
+					const token = jwt.sign({ email }, email+"hello", {
 						expiresIn: '24h', // expires in 24 hours
 					})
 					delete user.password
@@ -158,7 +158,7 @@ class HandlerGenerator {
 						success: true,
 						message: 'Authentication successful!',
 						user,
-						token: token,
+						token,
 					}
 					setTokenToDB({ token, id: user.id })
 				} else {
