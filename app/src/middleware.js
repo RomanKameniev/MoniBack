@@ -3,7 +3,21 @@ import api from '../database/api'
 import { sendMail } from '../utils/email'
 const jwtsecret = 'mysecretkey'
 
-let checkToken = (ctx, next) => {
+const setTokenToDB = async ({ token, id }) => {
+	await new Promise((res) => {
+		api.updateOneRecord('users', { id }, { token }, (error, result) => {
+			if (error) {
+				console.warn('error => ', error)
+				res(null)
+			} else {
+				console.log('res => ', !!result)
+			}
+			res(result || null)
+		})
+	})
+}
+
+let checkToken = async (ctx, next) => {
 	let token = ctx.headers['x-access-token'] || ctx.headers['authorization'] // Express headers are auto converted to lowercase
 	if (token.startsWith('Bearer ')) {
 		// Remove Bearer from string
@@ -11,7 +25,7 @@ let checkToken = (ctx, next) => {
 	}
 
 	if (token) {
-		jwt.verify(token, jwtsecret, (err, decoded) => {
+		await jwt.verify(token, jwtsecret, (err, decoded) => {
 			if (err) {
 				ctx.body = {
 					success: false,
@@ -19,9 +33,10 @@ let checkToken = (ctx, next) => {
 				}
 			} else {
 				ctx.decoded = decoded
-				next()
 			}
 		})
+		await next()
+
 	} else {
 		return (ctx.body = {
 			success: false,
@@ -98,7 +113,7 @@ class HandlerGenerator {
 		// console.log('res', req, res)
 		//console.log('ctx', ctx)
 		ctx.body = ctx.request.body
-		const email = ctx.body.username
+		const email = ctx.body.email
 		const password = ctx.body.password
 		// For the given username fetch user from DB
 		const mockedUsername = 'admin'
@@ -114,7 +129,7 @@ class HandlerGenerator {
 				ctx.body = {
 					success: true,
 					message: 'Authentication successful!',
-					data: 'welcome admin!',
+					text: 'welcome admin!',
 					token: token,
 				}
 				return
@@ -136,13 +151,16 @@ class HandlerGenerator {
 					const token = jwt.sign({ email }, jwtsecret, {
 						expiresIn: '24h', // expires in 24 hours
 					})
+					delete user.password
 					ctx.status = 200
 					// return the JWT token for the future API calls
 					ctx.body = {
 						success: true,
 						message: 'Authentication successful!',
+						user,
 						token: token,
 					}
+					setTokenToDB({ token, id: user.id })
 				} else {
 					ctx.status = 403
 					// return the JWT token for the future API calls
@@ -219,6 +237,13 @@ class HandlerGenerator {
 					success: false,
 					message: 'This username already taken',
 				}
+			}
+		} else {
+			ctx.status = 403
+			// return the JWT token for the future API calls
+			ctx.body = {
+				success: false,
+				message: 'Not all data provided',
 			}
 		}
 	}
