@@ -109,6 +109,34 @@ exports.updateOneRecord = async (col, select, value, callback) => {
 		}
 	})
 }
+
+
+exports.findManyRecords = async (col, select, value, callback) => {
+	let api
+
+	try {
+		api = db.collection(col)
+	} catch (e) {
+		console.log('error while try to get', e)
+		callback('error while getting db')
+		return
+	}
+	let objQuery = {}
+	objQuery[select] = { "$in": value }
+	console.log('objQuery', objQuery)
+	await api.find(objQuery, (error, result) => {
+		if (error) {
+			console.log('error while try to updateOne', error)
+			return callback(error)
+		} else {
+			//		console.log('result', result)
+			console.log('finded')
+			callback(null, result)
+		}
+	})
+}
+
+
 /*
 // Read a record
 exports.readRecord = function (k, callback) {
