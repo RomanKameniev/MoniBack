@@ -9,9 +9,9 @@ import cors from '@koa/cors'
 // модуль, который отдает статические файлы типа index.html из заданной директории
 //import passport from 'koa-passport' //реализация passport для Koa
 import { HandlerGenerator, checkToken, checkVarify } from './middleware'
-import { userQueryHandler } from './user'
+import { getUserInfo, addUserToContacts } from './user'
 import { setDevice } from './device'
-import {findUserDevices} from './device/findUserDevices'
+import { findUserDevices } from './device/findUserDevices'
 import { connect } from '../database/api'
 //import crypto from 'crypto'
 
@@ -19,7 +19,6 @@ const app = new Koa()
 var router = new Router()
 
 let handlers = new HandlerGenerator()
-let user = new userQueryHandler()
 
 //app.use(logger('combined'))
 
@@ -37,7 +36,9 @@ app.use(
 )
 router.get('/', checkVarify)
 router.get('/', checkToken, handlers.index)
-router.get('/user', checkToken, user.getUserInfo)
+
+router.get('/user', checkToken, getUserInfo)
+router.post('/user', checkToken, addUserToContacts)
 
 router.post('/login', handlers.login)
 router.post('/registration', handlers.registration)
