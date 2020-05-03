@@ -212,3 +212,73 @@ const addUserByIdMain = async ({ userId, user, token, ctx }) => {
 }
 
 exports.addUserToContacts = addUserToContacts
+
+const getUserContacts = async (ctx) => {
+	const token = getToken(ctx)
+	if (!token) {
+		ctx.status = 423
+		ctx.body = {
+			success: false,
+			message: 'invalid token',
+		}
+		return
+	}
+
+	const user = await getUser(token)
+	if (!user) {
+		ctx.status = 400
+		ctx.body = {
+			success: false,
+			message: 'user not found',
+		}
+		return
+	}
+	const contacts = user.contacts ? user.contacts : null
+
+	if (!contacts) {
+		ctx.body = 200
+		ctx.body = {
+			success: true,
+			data: [],
+		}
+	}
+	const ids = contacts.map((id) => new api.mongo.ObjectID(id))
+
+	const gettedUsers = await getUserContactsbyId(ids)
+
+	if (!gettedUsers) {
+		ctx.body = 400
+		ctx.body = {
+			success: false,
+			message: 'No users was found',
+		}
+	} else {
+		const users = gettedUsers.map((i) => {
+			delete i.password 
+			delete i.token 
+			delete i.active
+			return i
+		})
+		ctx.body = 200
+		ctx.body = {
+			success: true,
+			data: users,
+		}
+	}
+}
+
+const getUserContactsbyId = async (ids) => {
+	return await new Promise((res) => {
+		api.findManyRecords('users', '_id', ids, (error, result) => {
+			if (error) {
+				console.warn('error => ', error)
+				res(null)
+			} else {
+				console.log('res => ', !!result)
+			}
+			res(result.toArray() || null)
+		})
+	})
+}
+
+exports.getUserContacts = getUserContacts

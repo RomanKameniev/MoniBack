@@ -6,10 +6,8 @@ import loggerL from 'koa-logger' //perfect logger
 import bodyParser from 'koa-bodyparser' // парсер для POST запросов
 import serve from 'koa-static'
 import cors from '@koa/cors'
-// модуль, который отдает статические файлы типа index.html из заданной директории
-//import passport from 'koa-passport' //реализация passport для Koa
 import { HandlerGenerator, checkToken, checkVarify } from './middleware'
-import { getUserInfo, addUserToContacts } from './user'
+import { getUserInfo, addUserToContacts, getUserContacts } from './user'
 import { setDevice } from './device'
 import { findUserDevices } from './device/findUserDevices'
 import { connect } from '../database/api'
@@ -39,6 +37,7 @@ router.get('/', checkToken, handlers.index)
 
 router.get('/user', checkToken, getUserInfo)
 router.post('/user', checkToken, addUserToContacts)
+router.get('/contacts', checkToken, getUserContacts)
 
 router.post('/login', handlers.login)
 router.post('/registration', handlers.registration)
