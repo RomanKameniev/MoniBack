@@ -10,6 +10,7 @@ import cors from '@koa/cors'
 //import passport from 'koa-passport' //реализация passport для Koa
 import { HandlerGenerator, checkToken, checkVarify } from './middleware'
 import { userQueryHandler } from './user'
+import {setDevice} from './device'
 import { connect } from '../database/api'
 //import crypto from 'crypto'
 
@@ -39,6 +40,9 @@ router.get('/user', checkToken, user.getUserInfo)
 
 router.post('/login', handlers.login)
 router.post('/registration', handlers.registration)
+
+
+router.post('/device', checkToken, setDevice)
 
 connect()
 app.use(router.routes()).use(router.allowedMethods())

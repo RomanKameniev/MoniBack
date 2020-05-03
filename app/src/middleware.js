@@ -31,6 +31,7 @@ let checkToken = async (ctx, next) => {
 					success: false,
 					message: 'Token is not valid',
 				}
+				return
 			} else {
 				ctx.decoded = decoded
 			}
@@ -120,7 +121,7 @@ class HandlerGenerator {
 
 		if (email && password) {
 			if (email === mockedUsername && password === mockedPassword) {
-				const token = jwt.sign({ email }, email + 'hello', {
+				const token = jwt.sign({ email }, jwtsecret, {
 					expiresIn: '24h', // expires in 24 hours
 				})
 				ctx.status = 200
@@ -147,7 +148,7 @@ class HandlerGenerator {
 			if (user) {
 				if (password === user.password) {
 					console.log('password match')
-					const token = jwt.sign({ email }, email + 'hello', {
+					const token = jwt.sign({ email }, jwtsecret, {
 						expiresIn: '24h', // expires in 24 hours
 					})
 					delete user.password
