@@ -76,7 +76,7 @@ const setDevice = async (ctx) => {
 			return
 		}
 		devices.push(deviceId)
-		const addedToUser = await addDeviceToUser({ token, devices })
+		const addedToUser = await updateUserDevices({ token, devices })
 		if (addedToUser) {
 			ctx.status = 200
 			ctx.body = {
@@ -142,7 +142,8 @@ const addDevice = async ({ name, type, deviceId }) => {
 	})
 }
 
-const addDeviceToUser = async ({ token, devices: ownedDevices }) => {
+const updateUserDevices = async ({ token, devices: ownedDevices }) => {
+	console.log('ownedDevices',  ownedDevices)
 	return await new Promise((res) => {
 		api.updateOneRecord('users', { token }, { ownedDevices }, (error, result) => {
 			if (error) {
@@ -166,5 +167,7 @@ const addDeviceToUser = async ({ token, devices: ownedDevices }) => {
 // const updateDevice = () => {
 
 // }
+
+exports.updateUserDevices = updateUserDevices
 
 exports.setDevice = setDevice

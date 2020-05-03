@@ -10,6 +10,7 @@ import { HandlerGenerator, checkToken, checkVarify } from './middleware'
 import { getUserInfo, addUserToContacts, getUserContacts } from './user'
 import { setDevice } from './device'
 import { findUserDevices } from './device/findUserDevices'
+import { removeDevice } from './device/removeDevice'
 import { connect } from '../database/api'
 //import crypto from 'crypto'
 
@@ -44,6 +45,7 @@ router.post('/registration', handlers.registration)
 
 router.post('/device', checkToken, setDevice)
 router.get('/devices', checkToken, findUserDevices)
+router.delete('/device', checkToken, removeDevice)
 
 connect()
 app.use(router.routes()).use(router.allowedMethods())
