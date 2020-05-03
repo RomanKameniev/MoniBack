@@ -113,6 +113,14 @@ const addUserToContacts = async (ctx) => {
 		}
 		return
 	}
+	if (email === user.email || userId === user._id.toString()) {
+		ctx.status = 400
+		ctx.body = {
+			success: false,
+			message: 'You can not add you to your contacts!',
+		}
+		return
+	}
 
 	if (email) {
 		return await addUserByEmailMain({ email, user, token, ctx })
@@ -138,7 +146,7 @@ const addUserToContacts = async (ctx) => {
 
 const addUserByEmailMain = async ({ email, user, token, ctx }) => {
 	const gettedByEmail = await getUserByEmail(email)
-	if (getUserByEmail) {
+	if (gettedByEmail) {
 		let contacts = user && user.contacts && user.contacts.length ? [...user.contacts] : []
 		contacts = contacts.map((i) => i.toString())
 
