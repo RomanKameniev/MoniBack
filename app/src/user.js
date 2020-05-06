@@ -44,6 +44,8 @@ const getUser = async (token) => {
 	})
 }
 
+exports.getUser = getUser
+
 const getUserById = async (id) => {
 	const _id = new api.mongo.ObjectID(id)
 
@@ -254,8 +256,8 @@ const getUserContacts = async (ctx) => {
 		}
 	} else {
 		const users = gettedUsers.map((i) => {
-			delete i.password 
-			delete i.token 
+			delete i.password
+			delete i.token
 			delete i.active
 			return i
 		})
