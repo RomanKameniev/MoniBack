@@ -62,6 +62,8 @@ const getUserById = async (id) => {
 	})
 }
 
+exports.getUserById = getUserById
+
 const getUserByEmail = async (email) => {
 	return await new Promise((res) => {
 		api.findOneRecord('users', { email }, (error, result) => {
@@ -244,6 +246,7 @@ const getUserContacts = async (ctx) => {
 			data: [],
 		}
 	}
+	console.log('contacts', contacts, user)
 	const ids = contacts.map((id) => new api.mongo.ObjectID(id))
 
 	const gettedUsers = await getUserContactsbyId(ids)

@@ -12,6 +12,7 @@ import { setDevice } from './device'
 import { findUserDevices } from './device/findUserDevices'
 import { removeDevice } from './device/removeDevice'
 import { connect } from '../database/api'
+import { addUserToDevice } from './device/addUserToDevice'
 //import crypto from 'crypto'
 
 const app = new Koa()
@@ -46,6 +47,8 @@ router.post('/registration', handlers.registration)
 router.post('/device', checkToken, setDevice)
 router.get('/devices', checkToken, findUserDevices)
 router.delete('/device', checkToken, removeDevice)
+
+router.post('/add-user-to-device', checkToken, addUserToDevice)
 
 connect()
 app.use(router.routes()).use(router.allowedMethods())

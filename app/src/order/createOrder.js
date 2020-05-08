@@ -14,7 +14,6 @@ const removeDevice = async (ctx) => {
 		}
 	}
 	const user = await getUser(token)
-
 	if (!user) {
 		ctx.status = 423
 		ctx.body = {

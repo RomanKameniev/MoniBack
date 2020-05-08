@@ -1,12 +1,11 @@
 import api from '../database/api'
+import getToken from './token'
+import { getUser } from './user'
 
 const setDevice = async (ctx) => {
 	// console.log('ctx in user', ctx)
-	let token = ctx.headers['x-access-token'] || ctx.headers['authorization']
-	if (token.startsWith('Bearer ')) {
-		// Remove Bearer from string
-		token = token.slice(7, token.length)
-	}
+	const token = getToken(ctx)
+
 	if (!token) {
 		ctx.status = 423
 		ctx.body = {
@@ -100,20 +99,6 @@ const setDevice = async (ctx) => {
 	}
 }
 
-const getUser = async (token) => {
-	return await new Promise((res) => {
-		api.findOneRecord('users', { token }, (error, result) => {
-			if (error) {
-				console.warn('error => ', error)
-				res(null)
-			} else {
-				console.log('res => ', !!result)
-			}
-			res(result || null)
-		})
-	})
-}
-
 const getDevice = async (deviceId) => {
 	return await new Promise((res) => {
 		api.findOneRecord('devices', { deviceId }, (error, result) => {
@@ -143,7 +128,7 @@ const addDevice = async ({ name, type, deviceId }) => {
 }
 
 const updateUserDevices = async ({ token, devices: ownedDevices }) => {
-	console.log('ownedDevices',  ownedDevices)
+	console.log('ownedDevices', ownedDevices)
 	return await new Promise((res) => {
 		api.updateOneRecord('users', { token }, { ownedDevices }, (error, result) => {
 			if (error) {
@@ -156,17 +141,6 @@ const updateUserDevices = async ({ token, devices: ownedDevices }) => {
 		})
 	})
 }
-
-// const getDevices = () => {
-
-// }
-
-// const getDevice = () => {
-
-// }
-// const updateDevice = () => {
-
-// }
 
 exports.updateUserDevices = updateUserDevices
 
