@@ -5,19 +5,16 @@ const private_key = 'sandbox_SvjtBXzpFxVLRSF5I6cuDKNo4X46kt2KvjkXGhQ1'
 
 var liqpay = new LiqPay(public_key, private_key)
 
-
-
-const onPay = ({ phone, card_exp_month, card_exp_year, card_cvv, card, order_id,amount }) => {
-	liqpay.api(
-		'request',
+const onPay = ({ /*phone,*/ card_exp_month, card_exp_year, card_cvv, card,/*, order_id,*/ amount }) => {
+	liqpay.cnb_form(
 		{
 			action: 'pay',
 			version: '3',
-			phone,
+			// phone,
 			amount,
 			currency: 'USD',
 			description: 'description text',
-			order_id,
+			// order_id,
 			card,
 			card_exp_month,
 			card_exp_year,
@@ -29,6 +26,4 @@ const onPay = ({ phone, card_exp_month, card_exp_year, card_cvv, card, order_id,
 	)
 }
 
-
-
-exports.onPay =onPay
+exports.onPay = onPay
